@@ -10,8 +10,10 @@ import {
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
 
 import { ArticlesService } from '../../core/services/articles.service';
+import { DraftService, ArticleDraft } from '../../core/services/draft.service';
 import { ListErrorsComponent } from '../../shared/list-errors.component';
 
 @Component({
@@ -22,6 +24,28 @@ import { ListErrorsComponent } from '../../shared/list-errors.component';
       <div class="container page">
         <div class="row">
           <div class="col-md-10 offset-md-1 col-xs-12">
+
+            <!-- Draft restore banner -->
+            @if (showDraftBanner()) {
+              <div class="draft-banner">
+                <span class="draft-banner__message">
+                  <i class="ion-document-text"></i>
+                  You have an unsaved draft
+                  @if (draftSavedAt()) {
+                    <span class="draft-banner__time"> (saved at {{ draftSavedAt() }})</span>
+                  }
+                  . Do you want to continue where you left off?
+                </span>
+                <div class="draft-banner__actions">
+                  <button class="btn btn-sm btn-outline-success" type="button" (click)="restoreDraft()">
+                    Restore draft
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" (click)="discardDraft()">
+                    Discard
+                  </button>
+                </div>
+              </div>
+            }
 
             <app-list-errors [errors]="errors()" />
 
@@ -93,6 +117,7 @@ import { ListErrorsComponent } from '../../shared/list-errors.component';
 })
 export class EditorComponent implements OnInit {
   private readonly articlesService = inject(ArticlesService);
+  private readonly draftService = inject(DraftService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
@@ -106,21 +131,36 @@ export class EditorComponent implements OnInit {
   protected readonly isSubmitting = signal(false);
   protected readonly errors = signal<Record<string, string[]> | null>(null);
 
+  protected readonly showDraftBanner = signal(false);
+  protected readonly draftSavedAt = signal<string | null>(null);
+
+  /** Holds the loaded draft until the user decides to restore or discard it. */
+  private pendingDraft: ArticleDraft | null = null;
+
   protected readonly articleForm = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
     description: ['', [Validators.required]],
     body: ['', [Validators.required]],
   });
 
-  /** Separate control for the tag input â€” not part of the submitted payload. */
+  /** Separate control for the tag input — not part of the submitted payload. */
   protected readonly tagInputControl = new FormControl('', { nonNullable: true });
 
   ngOnInit(): void {
     const slug = this.slug();
+
+    // Wire up auto-save with debounce on every form value change.
+    this.articleForm.valueChanges
+      .pipe(debounceTime(1500), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.saveDraft());
+
     if (!slug) {
+      // New article mode: check for a draft immediately (synchronously).
+      this.checkAndOfferDraft(undefined);
       return;
     }
 
+    // Edit mode: fetch article from server first, then check for draft.
     this.articlesService
       .get(slug)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -131,6 +171,9 @@ export class EditorComponent implements OnInit {
           body: article.body,
         });
         this.tags.set([...article.tagList]);
+        // Check after the form has been populated with server data so that
+        // "Restore draft" will visibly overwrite the server values.
+        this.checkAndOfferDraft(slug);
       });
   }
 
@@ -139,12 +182,32 @@ export class EditorComponent implements OnInit {
     const tag = this.tagInputControl.value.trim();
     if (tag && !this.tags().includes(tag)) {
       this.tags.update((current) => [...current, tag]);
+      this.saveDraft(); // tag changes are discrete events — save immediately
     }
     this.tagInputControl.reset();
   }
 
   protected removeTag(tagToRemove: string): void {
     this.tags.update((current) => current.filter((tag) => tag !== tagToRemove));
+    this.saveDraft(); // tag changes are discrete events — save immediately
+  }
+
+  protected restoreDraft(): void {
+    if (!this.pendingDraft) return;
+    this.articleForm.patchValue({
+      title: this.pendingDraft.title,
+      description: this.pendingDraft.description,
+      body: this.pendingDraft.body,
+    });
+    this.tags.set([...this.pendingDraft.tags]);
+    this.pendingDraft = null;
+    this.showDraftBanner.set(false);
+  }
+
+  protected discardDraft(): void {
+    this.draftService.clearDraft(this.slug());
+    this.pendingDraft = null;
+    this.showDraftBanner.set(false);
   }
 
   protected submit(): void {
@@ -171,6 +234,7 @@ export class EditorComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (savedArticle) => {
+          this.draftService.clearDraft(slug);
           this.router.navigate(['/article', savedArticle.slug]);
         },
         error: (err) => {
@@ -178,5 +242,38 @@ export class EditorComponent implements OnInit {
           this.isSubmitting.set(false);
         },
       });
+  }
+
+  private checkAndOfferDraft(slug: string | undefined): void {
+    const draft = this.draftService.loadDraft(slug);
+    if (!draft) return;
+
+    this.pendingDraft = draft;
+    this.draftSavedAt.set(this.formatTime(draft.savedAt));
+    this.showDraftBanner.set(true);
+  }
+
+  private saveDraft(): void {
+    const { title, description, body } = this.articleForm.getRawValue();
+    // Only persist if there is something worth saving.
+    if (!title && !description && !body && this.tags().length === 0) return;
+
+    this.draftService.saveDraft(this.slug(), {
+      title,
+      description,
+      body,
+      tags: this.tags(),
+    });
+  }
+
+  private formatTime(isoString: string): string {
+    try {
+      return new Date(isoString).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return '';
+    }
   }
 }
