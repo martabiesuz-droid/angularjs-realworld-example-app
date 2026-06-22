@@ -1,1 +1,376 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles — dark mode overrides for Conduit */
+
+/* ─── Draft restore banner ──────────────────────────────────────────────────── */
+.draft-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1.25rem;
+  background-color: #fff8e1;
+  border: 1px solid #ffe082;
+  border-left: 4px solid #f9a825;
+  border-radius: 4px;
+  font-size: 0.92rem;
+  color: #5d4037;
+}
+
+.draft-banner__message {
+  flex: 1;
+  min-width: 0;
+}
+
+.draft-banner__time {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.draft-banner__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Dark mode variant */
+body.dark .draft-banner {
+  background-color: #2a2000 !important;
+  border-color: #6b5000 !important;
+  border-left-color: #f9a825 !important;
+  color: #ffe082 !important;
+}
+
+body.dark .draft-banner .btn-outline-success {
+  color: #81c784 !important;
+  border-color: #81c784 !important;
+}
+
+body.dark .draft-banner .btn-outline-success:hover {
+  background-color: #1b3a1f !important;
+}
+
+body.dark .draft-banner .btn-outline-secondary {
+  color: #aaa !important;
+  border-color: #555 !important;
+}
+
+body.dark .draft-banner .btn-outline-secondary:hover {
+  background-color: #333 !important;
+}
+
+/* ─── Smooth theme transition ─────────────────────────────────────────────── */
+body {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ─── Dark mode palette ────────────────────────────────────────────────────── */
+body.dark {
+  --dk-bg:           #1a1a2e;
+  --dk-bg-secondary: #16213e;
+  --dk-bg-card:      #0f3460;
+  --dk-bg-input:     #1e2a45;
+  --dk-border:       #2a3a5c;
+  --dk-text:         #e0e6f0;
+  --dk-text-muted:   #8899bb;
+  --dk-link:         #7eb8f7;
+  --dk-link-hover:   #aad4ff;
+  --dk-accent:       #5cb85c;
+  --dk-navbar-bg:    #111827;
+  --dk-banner-bg:    #0d2137;
+  --dk-tag-bg:       #1e3255;
+  --dk-tag-border:   #3a5080;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────────────── */
+body.dark {
+  background-color: var(--dk-bg) !important;
+  color: var(--dk-text) !important;
+}
+
+/* ─── Navbar ────────────────────────────────────────────────────────────────── */
+body.dark .navbar,
+body.dark .navbar-light {
+  background-color: var(--dk-navbar-bg) !important;
+  border-bottom: 1px solid var(--dk-border);
+}
+
+body.dark .navbar .navbar-brand,
+body.dark .navbar-light .navbar-brand {
+  color: var(--dk-accent) !important;
+}
+
+body.dark .navbar .nav-link,
+body.dark .navbar-light .nav-link {
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .navbar .nav-link:hover,
+body.dark .navbar-light .nav-link:hover,
+body.dark .navbar .nav-link.active,
+body.dark .navbar-light .nav-link.active {
+  color: var(--dk-text) !important;
+}
+
+body.dark .navbar .theme-toggle-btn,
+body.dark .navbar-light .theme-toggle-btn {
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .navbar .theme-toggle-btn:hover,
+body.dark .navbar-light .theme-toggle-btn:hover {
+  color: var(--dk-text) !important;
+}
+
+/* ─── Banner ────────────────────────────────────────────────────────────────── */
+body.dark .banner {
+  background-color: var(--dk-banner-bg) !important;
+  background-image: none !important;
+}
+
+body.dark .banner h1,
+body.dark .banner p {
+  color: var(--dk-text) !important;
+  text-shadow: none !important;
+}
+
+/* ─── Feed toggle / pill nav ────────────────────────────────────────────────── */
+body.dark .feed-toggle {
+  border-bottom-color: var(--dk-border) !important;
+}
+
+body.dark .nav-pills .nav-link,
+body.dark .nav-pills .nav-item .nav-link {
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .nav-pills .nav-link.active,
+body.dark .nav-pills .nav-link:hover {
+  color: var(--dk-accent) !important;
+  border-bottom-color: var(--dk-accent) !important;
+}
+
+body.dark .outline-active .nav-link.active {
+  border-bottom: 2px solid var(--dk-accent) !important;
+  color: var(--dk-accent) !important;
+}
+
+/* ─── Article preview / cards ───────────────────────────────────────────────── */
+body.dark .article-preview {
+  border-top-color: var(--dk-border) !important;
+}
+
+body.dark .article-preview .article-meta,
+body.dark .article-preview .info,
+body.dark .article-preview .author,
+body.dark .article-preview p {
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .article-preview h1 a,
+body.dark .article-preview .preview-link h1,
+body.dark .article-preview .preview-link h2 {
+  color: var(--dk-text) !important;
+}
+
+body.dark .article-preview .preview-link:hover h1,
+body.dark .article-preview .preview-link:hover h2 {
+  color: var(--dk-link-hover) !important;
+}
+
+body.dark .article-preview .read-more {
+  color: var(--dk-text-muted) !important;
+}
+
+/* ─── Cards (comment form, comment items) ───────────────────────────────────── */
+body.dark .card {
+  background-color: var(--dk-bg-card) !important;
+  border-color: var(--dk-border) !important;
+}
+
+body.dark .card-block,
+body.dark .card-footer {
+  background-color: transparent !important;
+  border-top-color: var(--dk-border) !important;
+  color: var(--dk-text) !important;
+}
+
+body.dark .card-footer {
+  background-color: var(--dk-bg-secondary) !important;
+}
+
+body.dark .card-footer a,
+body.dark .card-footer span {
+  color: var(--dk-text-muted) !important;
+}
+
+/* ─── Article page ──────────────────────────────────────────────────────────── */
+body.dark .article-page .banner {
+  background-color: var(--dk-banner-bg) !important;
+}
+
+body.dark .article-page .banner h1,
+body.dark .article-page .banner .article-meta,
+body.dark .article-page .banner .article-meta a,
+body.dark .article-page .banner .article-meta span,
+body.dark .article-page .banner .article-meta .date {
+  color: var(--dk-text) !important;
+}
+
+body.dark .article-content,
+body.dark .article-content p,
+body.dark .article-content li,
+body.dark .article-content h1,
+body.dark .article-content h2,
+body.dark .article-content h3,
+body.dark .article-content h4 {
+  color: var(--dk-text) !important;
+}
+
+body.dark hr {
+  border-color: var(--dk-border) !important;
+}
+
+/* ─── Tags ──────────────────────────────────────────────────────────────────── */
+body.dark .tag-list .tag-default,
+body.dark .tag-default.tag-pill {
+  background-color: var(--dk-tag-bg) !important;
+  color: var(--dk-text-muted) !important;
+  border-color: var(--dk-tag-border) !important;
+}
+
+body.dark .tag-list .tag-outline,
+body.dark .tag-outline {
+  background-color: transparent !important;
+  border-color: var(--dk-tag-border) !important;
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .sidebar .tag-list a {
+  background-color: var(--dk-tag-bg) !important;
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .sidebar .tag-list a:hover {
+  background-color: var(--dk-border) !important;
+  color: var(--dk-text) !important;
+}
+
+/* ─── Forms ─────────────────────────────────────────────────────────────────── */
+body.dark .form-control {
+  background-color: var(--dk-bg-input) !important;
+  border-color: var(--dk-border) !important;
+  color: var(--dk-text) !important;
+}
+
+body.dark .form-control::placeholder {
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .form-control:focus {
+  background-color: var(--dk-bg-input) !important;
+  border-color: var(--dk-link) !important;
+  color: var(--dk-text) !important;
+  box-shadow: 0 0 0 0.2rem rgba(126, 184, 247, 0.25) !important;
+}
+
+body.dark fieldset[disabled] .form-control {
+  background-color: var(--dk-bg-secondary) !important;
+}
+
+/* ─── Buttons ───────────────────────────────────────────────────────────────── */
+body.dark .btn-outline-secondary {
+  color: var(--dk-text-muted) !important;
+  border-color: var(--dk-border) !important;
+}
+
+body.dark .btn-outline-secondary:hover {
+  background-color: var(--dk-bg-card) !important;
+  color: var(--dk-text) !important;
+}
+
+/* ─── Auth pages (login/register) ───────────────────────────────────────────── */
+body.dark .auth-page {
+  background-color: var(--dk-bg) !important;
+}
+
+body.dark .auth-page h1,
+body.dark .auth-page p,
+body.dark .auth-page a {
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark .auth-page a:hover {
+  color: var(--dk-link-hover) !important;
+}
+
+/* ─── Error list ────────────────────────────────────────────────────────────── */
+body.dark .error-messages {
+  color: #f08080 !important;
+}
+
+/* ─── Profile page ──────────────────────────────────────────────────────────── */
+body.dark .profile-page .user-info {
+  background-color: var(--dk-bg-secondary) !important;
+}
+
+body.dark .profile-page .user-info h4,
+body.dark .profile-page .user-info p {
+  color: var(--dk-text) !important;
+}
+
+/* ─── Settings page ─────────────────────────────────────────────────────────── */
+body.dark .settings-page h1 {
+  color: var(--dk-text) !important;
+}
+
+/* ─── Editor page ───────────────────────────────────────────────────────────── */
+body.dark .editor-page .tag-list .tag-default {
+  background-color: var(--dk-tag-bg) !important;
+  color: var(--dk-text-muted) !important;
+}
+
+/* ─── Pagination ────────────────────────────────────────────────────────────── */
+body.dark .page-item .page-link {
+  background-color: var(--dk-bg-secondary) !important;
+  border-color: var(--dk-border) !important;
+  color: var(--dk-link) !important;
+}
+
+body.dark .page-item.active .page-link {
+  background-color: var(--dk-accent) !important;
+  border-color: var(--dk-accent) !important;
+  color: #fff !important;
+}
+
+body.dark .page-item .page-link:hover {
+  background-color: var(--dk-bg-card) !important;
+  color: var(--dk-link-hover) !important;
+}
+
+/* ─── Footer ────────────────────────────────────────────────────────────────── */
+body.dark footer {
+  background-color: var(--dk-navbar-bg) !important;
+  border-top: 1px solid var(--dk-border);
+}
+
+body.dark footer .logo-font {
+  color: var(--dk-accent) !important;
+}
+
+body.dark footer .attribution,
+body.dark footer .attribution a {
+  color: var(--dk-text-muted) !important;
+}
+
+body.dark footer .attribution a:hover {
+  color: var(--dk-link-hover) !important;
+}
+
+/* ─── General links ─────────────────────────────────────────────────────────── */
+body.dark a {
+  color: var(--dk-link);
+}
+
+body.dark a:hover {
+  color: var(--dk-link-hover);
+}

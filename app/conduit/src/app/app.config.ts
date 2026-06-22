@@ -19,6 +19,7 @@ import {
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { UserService } from './core/services/user.service';
+import { ThemeService } from './core/services/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +31,8 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadAllModules),
       withRouterConfig({ onSameUrlNavigation: 'reload' }),
     ),
+    // Apply saved theme to <body> before first render (prevents flash).
+    provideAppInitializer(() => inject(ThemeService).initialize()),
     // Verify stored JWT and populate currentUser before first render.
     provideAppInitializer(() => inject(UserService).verifyAuth()),
   ],

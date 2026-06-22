@@ -3,6 +3,7 @@ import { LowerCasePipe } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { UserService } from '../core/services/user.service';
+import { ThemeService } from '../core/services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -36,6 +37,15 @@ import { UserService } from '../core/services/user.service';
                 {{ user.username }}
               </a>
             </li>
+            <li class="nav-item">
+              <button class="nav-link theme-toggle-btn" (click)="themeService.toggle()" [attr.aria-label]="themeService.isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'" title="{{ themeService.isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode' }}">
+                @if (themeService.isDarkMode()) {
+                  <i class="ion-ios-sunny"></i>
+                } @else {
+                  <i class="ion-ios-moon"></i>
+                }
+              </button>
+            </li>
           </ul>
         } @else {
           <!-- Guest nav -->
@@ -49,13 +59,35 @@ import { UserService } from '../core/services/user.service';
             <li class="nav-item">
               <a class="nav-link" routerLink="/register" routerLinkActive="active">Sign up</a>
             </li>
+            <li class="nav-item">
+              <button class="nav-link theme-toggle-btn" (click)="themeService.toggle()" [attr.aria-label]="themeService.isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'" title="{{ themeService.isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode' }}">
+                @if (themeService.isDarkMode()) {
+                  <i class="ion-ios-sunny"></i>
+                } @else {
+                  <i class="ion-ios-moon"></i>
+                }
+              </button>
+            </li>
           </ul>
         }
       </div>
     </nav>
   `,
+  styles: [`
+    .theme-toggle-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.425rem 0.8rem;
+      font-size: 1.1rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
+  `],
 })
 export class HeaderComponent {
   protected readonly userService = inject(UserService);
+  protected readonly themeService = inject(ThemeService);
   protected readonly appName = environment.appName;
 }
