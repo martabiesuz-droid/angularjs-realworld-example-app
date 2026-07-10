@@ -28,3 +28,8 @@ test('register route responds', async ({ page }) => {
   const html = await page.content();
   expect(html).toContain('<html');
 });
+
+test('page has correct title', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle('Home \u2014 Conduit');
+});
